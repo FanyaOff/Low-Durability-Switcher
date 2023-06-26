@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "lowdurabilityswitcher",
+  "version": "${version}",
+
+  "name": "Low Durability Switcher",
+  "description": "This mod saves you from unfortunate tool breakage by switching the slot to another",
+  "authors": [
+    "Fanya"
+  ],
+  "contact": {
+    "homepage": "https://fan9.ru/",
+    "sources": "https://github.com/FanyaOff/Low-Durability-Switcher"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/lowdurabilityswitcher/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.fanya.lowdurabilityswitcher.LowDurabilitySwitcher"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14.21",
+    "fabric-api": "*",
+    "minecraft": "~1.20.1",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
