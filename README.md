@@ -1,4 +1,4 @@
-[**Modrinth Page**](https://asd.com)
+[**Modrinth Page**](https://modrinth.com/mod/low-durability-switcher)
 
 # Low Durability Switcher
 
