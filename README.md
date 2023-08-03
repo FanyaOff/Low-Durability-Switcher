@@ -4,6 +4,8 @@
 
 Mod, that saves you from unfortunate tool breakage by switching the slot to another
 
+**For quilt use [quilted fabric api](https://modrinth.com/mod/qsl)**
+
 # Features
 
 - No settings, which makes it easier to use the mod
