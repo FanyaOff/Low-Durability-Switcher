@@ -1,50 +1,60 @@
 package net.fanya.lowdurabilityswitcher;
 
-import net.fabricmc.loader.api.FabricLoader;
-import org.json.JSONObject;
 
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
-public class Config {
-    public static String FILE_PATH  = FabricLoader.getInstance().getConfigDir().toString() + "\\LowDurabilitySwitcher.json";
-    private JSONObject config;
+public class Config{
+    private boolean isEnabled;
 
-    public Config() {
-        config = new JSONObject();
-        config.put("IsEnabled", false);
+    // Constructor
+    public Config(boolean isEnabled) {
+        this.isEnabled = isEnabled;
     }
 
-    public void readConfigFromFile() {
-        try {
-            String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
-            config = new JSONObject(content);
-        } catch (IOException e) {
-            LowDurabilitySwitcher.LOGGER.error("Error reading the configuration file: " + e.getMessage());
+    // Method to write the configuration to a JSON file
+    public void saveConfig(String filePath) throws IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(this);
+
+        try (FileWriter writer = new FileWriter(new File(filePath))) {
+            writer.write(json);
         }
     }
 
-    public void saveConfigToFile() {
-        try (FileWriter fileWriter = new FileWriter(FILE_PATH)) {
-            fileWriter.write(config.toString());
-        } catch (IOException e) {
-            LowDurabilitySwitcher.LOGGER.error("Error saving the configuration file: " + e.getMessage());
+    // Method to load the configuration from a JSON file or create a new one
+    public static Config loadConfig(String filePath) throws IOException {
+        Gson gson = new Gson();
+        Config config;
+
+        File configFile = new File(filePath);
+        if (configFile.exists()) {
+            // If the file exists, load the configuration from it
+            try (FileReader reader = new FileReader(configFile)) {
+                config = gson.fromJson(reader, Config.class);
+            }
+        } else {
+            // If the file doesn't exist, create a new configuration with default values
+            config = new Config(false);
+            config.saveConfig(filePath);
         }
+
+        return config;
     }
 
-    public void createDefaultConfigFile() {
-        if (!Files.exists(Paths.get(FILE_PATH))) {
-            saveConfigToFile();
-        }
+    // Getter for the isEnabled property
+    public boolean isEnabled() {
+        return isEnabled;
     }
 
-    public boolean isFeatureEnabled() {
-        return config.getBoolean("IsEnabled");
-    }
-
-    public void setFeatureEnabled(boolean isEnabled) {
-        config.put("IsEnabled", isEnabled);
+    // Setter for the isEnabled property
+    public void setEnabled(boolean isEnabled) {
+        this.isEnabled = isEnabled;
     }
 }
