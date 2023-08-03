@@ -21,10 +21,13 @@ import static net.minecraft.text.Text.literal;
 
 public class LowDurabilitySwitcher implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("lowdurabilityswitcher");
-	public static boolean isToggled = false;
+	public static Config config = new Config();
+	public static boolean isToggled = config.isFeatureEnabled();
 	private static KeyBinding switcherToggleKeybinding;
 	@Override
 	public void onInitialize() {
+		config.createDefaultConfigFile();
+		config.readConfigFromFile();
 		LOGGER.info("Initialized!");
 		switcherToggleKeybinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 				"Switching status", // The translation key of the keybinding's name
@@ -36,9 +39,13 @@ public class LowDurabilitySwitcher implements ModInitializer {
 			while (switcherToggleKeybinding.wasPressed()) {
 				if (!isToggled){
 					isToggled = true;
+					config.setFeatureEnabled(true);
+					config.saveConfigToFile();
 					client.player.sendMessage(Text.literal("Switcher status: §aEnabled"), true);
 				} else {
 					isToggled = false;
+					config.setFeatureEnabled(false);
+					config.saveConfigToFile();
 					client.player.sendMessage(Text.literal("Switcher status: §cDisabled"), true);
 				}
 			}
