@@ -1,0 +1,8 @@
+{
+	"lowdurabilityswitcher.keybindcategory" : "Low Durability Switcher",
+	"lowdurabilityswitcher.keybind" : "Switching status",
+	
+	"lowdurabilityswitcher.enabled" : "Switcher status: §aEnabled",
+	"lowdurabilityswitcher.disabled" : "Switcher status: §cDisabled",
+	"lowdurabilityswitcher.warning" : "The durability of the tool in your hands is less than §l§c10"
+}

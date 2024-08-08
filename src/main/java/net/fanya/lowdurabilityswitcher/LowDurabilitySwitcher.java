@@ -41,10 +41,10 @@ public class LowDurabilitySwitcher implements ModInitializer {
 		LOGGER.info("Last LowDurabilitySwitcher isEnabled value: " + isModToggled);
 		LOGGER.info("Initialized!");
 		switcherToggleKeybinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-				"Switching status", // The translation key of the keybinding's name
+				"lowdurabilityswitcher.keybind", // The translation key of the keybinding's name
 				InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
 				GLFW.GLFW_KEY_R, // The keycode of the key
-				"Low Durability Switcher" // The translation key of the keybinding's category.
+				"lowdurabilityswitcher.keybindcategory" // The translation key of the keybinding's category.
 		));
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (switcherToggleKeybinding.wasPressed()) {
@@ -56,7 +56,7 @@ public class LowDurabilitySwitcher implements ModInitializer {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					client.player.sendMessage(Text.literal("Switcher status: §aEnabled"), true);
+					client.player.sendMessage(Text.translatable("lowdurabilityswitcher.enabled"), true);
 				} else {
 					isModToggled = false;
 					config.setEnabled(false);
@@ -65,7 +65,7 @@ public class LowDurabilitySwitcher implements ModInitializer {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					client.player.sendMessage(Text.literal("Switcher status: §cDisabled"), true);
+					client.player.sendMessage(Text.translatable("lowdurabilityswitcher.disabled"), true);
 				}
 			}
 		});
@@ -74,7 +74,7 @@ public class LowDurabilitySwitcher implements ModInitializer {
 			if (!player.isSpectator()) {
 				if (isModToggled && getItemDurability(player) < 10 && getItemDurability(player) != 0){
 					player.getInventory().scrollInHotbar(2);
-					player.sendMessage(Text.literal("The durability of the tool in your hands is less than §l§c10"), true);
+					player.sendMessage(Text.translatable("lowdurabilityswitcher.warning"), true);
 					player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), 10F,0F);
 				}
 			}
