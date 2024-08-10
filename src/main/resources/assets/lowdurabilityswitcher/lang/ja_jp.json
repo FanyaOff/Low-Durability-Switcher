@@ -1,0 +1,8 @@
+{ 
+	"lowdurabilityswitcher.keybindcategory" : "Low Durability Switcher",
+	"lowdurabilityswitcher.keybind" : "低い耐久値の切り替えるトグル",
+	
+	"lowdurabilityswitcher.enabled" : "切り替えステータス：§aオン",
+	"lowdurabilityswitcher.disabled" : "切り替えステータス：§cオフ",
+	"lowdurabilityswitcher.warning" : "手持ち道具の耐久値が§l§c10以下§rです。"
+}
