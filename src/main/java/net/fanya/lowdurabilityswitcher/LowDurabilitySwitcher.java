@@ -73,7 +73,9 @@ public class LowDurabilitySwitcher implements ModInitializer {
 			BlockState state = world.getBlockState(pos);
 			if (!player.isSpectator()) {
 				if (isModToggled && getItemDurability(player) < 10 && getItemDurability(player) != 0){
-					player.getInventory().scrollInHotbar(2);
+					int currentSlot = player.getInventory().selectedSlot;
+					int newSlot = currentSlot == 0 ? 35 : currentSlot - 1;
+					player.getInventory().setSelectedSlot(newSlot);
 					player.sendMessage(Text.translatable("lowdurabilityswitcher.warning"), true);
 					player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), 10F,0F);
 				}
