@@ -1,8 +1,19 @@
 {
-	"lowdurabilityswitcher.keybindcategory" : "Low Durability Switcher",
-	"lowdurabilityswitcher.keybind" : "Switching status",
-	
-	"lowdurabilityswitcher.enabled" : "Switcher status: §aEnabled",
-	"lowdurabilityswitcher.disabled" : "Switcher status: §cDisabled",
-	"lowdurabilityswitcher.warning" : "The durability of the tool in your hands is less than §l§c10"
+  "config.lowdurabilityswitcher.title": "Low Durability Switcher Settings",
+  "config.lowdurabilityswitcher.tools": "Tools",
+  "config.lowdurabilityswitcher.armor": "Armor",
+  "config.lowdurabilityswitcher.tool_switcher_enabled": "Enable tool auto-switching",
+  "config.lowdurabilityswitcher.tool_durability_threshold": "Tool durability threshold",
+  "config.lowdurabilityswitcher.armor_switcher_enabled": "Enable armor sound alert",
+  "config.lowdurabilityswitcher.armor_durability_threshold": "Armor durability threshold",
+  "config.lowdurabilityswitcher.category.general": "General settings",
+  "category.lowdurabilityswitcher": "Low Durability Switcher",
+  "key.lowdurabilityswitcher.toggle_armor": "Toggle Armor sound alert",
+  "key.lowdurabilityswitcher.toggle_tool": "Toggle Tools",
+  "message.lowdurabilityswitcher.toggle_armor": "Armor sound alert: %s",
+  "message.lowdurabilityswitcher.armor_removed": "Low durability armor, change it! (%s)",
+  "message.lowdurabilityswitcher.toggle_tool": "Tool Switching: %s",
+  "message.lowdurabilityswitcher.tool_removed": "Low durability tool has been replaced!",
+  "message.lowdurabilityswitcher.yes": "Yes",
+  "message.lowdurabilityswitcher.no": "No"
 }

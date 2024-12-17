@@ -1,0 +1,19 @@
+{
+  "config.lowdurabilityswitcher.title": "Настройки переключателя низкой прочности",
+  "config.lowdurabilityswitcher.tools": "Инструменты",
+  "config.lowdurabilityswitcher.armor": "Броня",
+  "config.lowdurabilityswitcher.tool_switcher_enabled": "Включить автопереключение инструментов",
+  "config.lowdurabilityswitcher.tool_durability_threshold": "Порог прочности для переключения инструментов",
+  "config.lowdurabilityswitcher.armor_switcher_enabled": "Включить автопереключение брони",
+  "config.lowdurabilityswitcher.armor_durability_threshold": "Порог прочности для переключения брони",
+  "config.lowdurabilityswitcher.category.general": "Общие параметры",
+  "category.lowdurabilityswitcher": "Переключатель низкой прочности",
+  "key.lowdurabilityswitcher.toggle_armor": "Переключение брони",
+  "key.lowdurabilityswitcher.toggle_tool": "Переключение инструментов",
+  "message.lowdurabilityswitcher.toggle_armor": "Звуковое уведмоление о низкой прочности: %s",
+  "message.lowdurabilityswitcher.armor_removed": "Броня с низкой прочностью, замените ее! (%s)",
+  "message.lowdurabilityswitcher.toggle_tool": "Переключение инструментов: %s",
+  "message.lowdurabilityswitcher.tool_removed": "Инструмент с низкой прочностью заменен!",
+  "message.lowdurabilityswitcher.yes": "Да",
+  "message.lowdurabilityswitcher.no": "Нет"
+}

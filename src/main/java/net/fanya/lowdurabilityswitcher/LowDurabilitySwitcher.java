@@ -1,90 +1,46 @@
 package net.fanya.lowdurabilityswitcher;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
+import net.fanya.lowdurabilityswitcher.config.ConfigHandler;
+import net.fanya.lowdurabilityswitcher.logic.ArmorSwitcher;
+import net.fanya.lowdurabilityswitcher.logic.ToolSwitcher;
+import net.fanya.lowdurabilityswitcher.util.KeyBindings;
 import net.minecraft.util.ActionResult;
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+public class LowDurabilitySwitcher implements ClientModInitializer {
+	public static final String MOD_ID = "lowdurabilityswitcher";
+	public static Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	private static int tickCounter = 0;
 
-import static net.minecraft.text.Text.literal;
-
-public class LowDurabilitySwitcher implements ModInitializer {
-	public static String configFile  = FabricLoader.getInstance().getConfigDir().toString() + "\\LowDurabilitySwitcher.json";
-	public static final Logger LOGGER = LoggerFactory.getLogger("lowdurabilityswitcher");
-	public static boolean isModToggled = false;
-	private static KeyBinding switcherToggleKeybinding;
 	@Override
-	public void onInitialize() {
-		Config config;
-		try {
-			LOGGER.info("Initializing LowDurabilitySwitcher.json");
-			config = Config.loadConfig(configFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
-		isModToggled = config.isEnabled();
-		LOGGER.info("Last LowDurabilitySwitcher isEnabled value: " + isModToggled);
-		LOGGER.info("Initialized!");
-		switcherToggleKeybinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-				"lowdurabilityswitcher.keybind", // The translation key of the keybinding's name
-				InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-				GLFW.GLFW_KEY_R, // The keycode of the key
-				"lowdurabilityswitcher.keybindcategory" // The translation key of the keybinding's category.
-		));
+	public void onInitializeClient() {
+		LOGGER.info("Initializing " + MOD_ID);
+		ConfigHandler.initialize();
+		KeyBindings.initialize();
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			while (switcherToggleKeybinding.wasPressed()) {
-				if (!isModToggled){
-					isModToggled = true;
-					config.setEnabled(true);
-					try {
-						config.saveConfig(configFile);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					client.player.sendMessage(Text.translatable("lowdurabilityswitcher.enabled"), true);
-				} else {
-					isModToggled = false;
-					config.setEnabled(false);
-					try {
-						config.saveConfig(configFile);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					client.player.sendMessage(Text.translatable("lowdurabilityswitcher.disabled"), true);
+			while (KeyBindings.toggleToolKey.wasPressed()) {
+				ToolSwitcher.toggleSwitcher(client);
+			}
+
+			while (KeyBindings.toggleArmorKey.wasPressed()) {
+				ArmorSwitcher.toggleSwitcher(client);
+			}
+
+			AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
+				ToolSwitcher.checkAndSwapTool(player);
+				return ActionResult.PASS;
+			});
+			if (ArmorSwitcher.isEnabled()) {
+				tickCounter++;
+				if (tickCounter >= 10){
+					tickCounter = 0;
+					ArmorSwitcher.checkAndSwapArmor(client.player);
 				}
 			}
 		});
-		AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
-			BlockState state = world.getBlockState(pos);
-			if (!player.isSpectator()) {
-				if (isModToggled && getItemDurability(player) < 10 && getItemDurability(player) != 0){
-					int currentSlot = player.getInventory().selectedSlot;
-					int newSlot = currentSlot == 0 ? 35 : currentSlot - 1;
-					player.getInventory().setSelectedSlot(newSlot);
-					player.sendMessage(Text.translatable("lowdurabilityswitcher.warning"), true);
-					player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), 10F,0F);
-				}
-			}
-			return ActionResult.PASS;
-		});
-	}
-	public int getItemDurability(PlayerEntity player){
-		ItemStack item = player.getInventory().getMainHandStack();
-		return Integer.valueOf(item.getMaxDamage() - item.getDamage());
 	}
 }

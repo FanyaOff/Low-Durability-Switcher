@@ -18,8 +18,11 @@
 
   "environment": "*",
   "entrypoints": {
-    "main": [
+    "client": [
       "net.fanya.lowdurabilityswitcher.LowDurabilitySwitcher"
+    ],
+    "modmenu": [
+      "net.fanya.lowdurabilityswitcher.integration.ModMenuIntegration"
     ]
   },
   "depends": {
