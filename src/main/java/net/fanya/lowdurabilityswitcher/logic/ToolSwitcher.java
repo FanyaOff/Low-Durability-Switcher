@@ -1,10 +1,12 @@
 package net.fanya.lowdurabilityswitcher.logic;
 
 import net.fanya.lowdurabilityswitcher.config.ConfigHandler;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -35,23 +37,48 @@ public class ToolSwitcher {
                 true
         );
     }
-
     public static void checkAndSwapTool(PlayerEntity player) {
-        if (player != null){
+        if (player != null) {
             int threshold = ConfigHandler.getConfig().toolDurabilityThreshold;
 
             ItemStack item = player.getInventory().getMainHandStack();
-            int itemDurability = Integer.valueOf(item.getMaxDamage() - item.getDamage());
+            int itemDurability = item.getMaxDamage() - item.getDamage();
 
             if (!player.isSpectator()) {
-                if (ToolSwitcher.isEnabled() && itemDurability < threshold && itemDurability != 0){
+                if (ToolSwitcher.isEnabled() && itemDurability < threshold && itemDurability != 0) {
+
                     int currentSlot = player.getInventory().selectedSlot;
-                    int newSlot = currentSlot == 0 ? 35 : currentSlot - 1;
-                    player.getInventory().setSelectedSlot(newSlot);
-                    player.sendMessage(Text.translatable("message.lowdurabilityswitcher.tool_removed").formatted(Formatting.RED), true);
-                    player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), 10F,0F);
+                    int totalSlots = player.getInventory().size();
+                    int newSlot = -1;
+
+                    for (int i = 0; i < totalSlots; i++) {
+                        int slotToCheck = (currentSlot + i + 1) % totalSlots;
+                        ItemStack stackInSlot = player.getInventory().getStack(slotToCheck);
+
+                        if (!isBuildingBlock(stackInSlot)) {
+                            newSlot = slotToCheck;
+                            break;
+                        }
+                    }
+
+                    if (newSlot != -1) {
+                        player.getInventory().setSelectedSlot(newSlot);
+                        player.sendMessage(Text.translatable("message.lowdurabilityswitcher.tool_removed").formatted(Formatting.RED), true);
+                        player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), 10F, 0F);
+                    }
                 }
             }
         }
+    }
+
+    private static boolean isBuildingBlock(ItemStack stack) {
+        if (stack == null || stack.isEmpty()) return false;
+
+        if (stack.getItem() instanceof BlockItem blockItem) {
+            Block block = blockItem.getBlock();
+            return block.getDefaultState().isSolid();
+        }
+
+        return false;
     }
 }

@@ -3,10 +3,13 @@ package net.fanya.lowdurabilityswitcher;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fanya.lowdurabilityswitcher.config.ConfigHandler;
 import net.fanya.lowdurabilityswitcher.logic.ArmorSwitcher;
 import net.fanya.lowdurabilityswitcher.logic.ToolSwitcher;
 import net.fanya.lowdurabilityswitcher.util.KeyBindings;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,11 @@ public class LowDurabilitySwitcher implements ClientModInitializer {
 				ToolSwitcher.checkAndSwapTool(player);
 				return ActionResult.PASS;
 			});
+			UseBlockCallback.EVENT.register((player, world, hand, pos) -> {
+				ToolSwitcher.checkAndSwapTool(player);
+				return ActionResult.PASS;
+			});
+
 			if (ArmorSwitcher.isEnabled()) {
 				tickCounter++;
 				if (tickCounter >= 10){
@@ -41,6 +49,8 @@ public class LowDurabilitySwitcher implements ClientModInitializer {
 					ArmorSwitcher.checkAndSwapArmor(client.player);
 				}
 			}
+
+
 		});
 	}
 }
