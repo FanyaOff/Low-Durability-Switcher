@@ -41,13 +41,13 @@ public class ToolSwitcher {
         if (player != null) {
             int threshold = ConfigHandler.getConfig().toolDurabilityThreshold;
 
-            ItemStack item = player.getInventory().getMainHandStack();
+            ItemStack item = player.getInventory().getSelectedStack();
             int itemDurability = item.getMaxDamage() - item.getDamage();
 
             if (!player.isSpectator()) {
                 if (ToolSwitcher.isEnabled() && itemDurability < threshold && itemDurability != 0) {
 
-                    int currentSlot = player.getInventory().selectedSlot;
+                    int currentSlot = player.getInventory().getSelectedSlot();
                     int totalSlots = player.getInventory().size();
                     int newSlot = -1;
 
