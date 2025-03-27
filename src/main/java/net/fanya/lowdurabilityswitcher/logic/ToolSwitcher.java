@@ -48,11 +48,10 @@ public class ToolSwitcher {
                 if (ToolSwitcher.isEnabled() && itemDurability < threshold && itemDurability != 0) {
 
                     int currentSlot = player.getInventory().getSelectedSlot();
-                    int totalSlots = player.getInventory().size();
                     int newSlot = -1;
 
-                    for (int i = 0; i < totalSlots; i++) {
-                        int slotToCheck = (currentSlot + i + 1) % totalSlots;
+                    for (int i = 0; i < 9; i++) {
+                        int slotToCheck = (currentSlot + i + 1) % 9;
                         ItemStack stackInSlot = player.getInventory().getStack(slotToCheck);
 
                         if (!isBuildingBlock(stackInSlot)) {
@@ -70,6 +69,7 @@ public class ToolSwitcher {
             }
         }
     }
+
 
     private static boolean isBuildingBlock(ItemStack stack) {
         if (stack == null || stack.isEmpty()) return false;
