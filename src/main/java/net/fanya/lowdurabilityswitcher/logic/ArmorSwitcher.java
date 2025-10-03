@@ -39,7 +39,7 @@ public class ArmorSwitcher {
     }
 
     public static void checkAndSwapArmor(PlayerEntity player) {
-        if (player == null || !player.getWorld().isClient) {
+        if (player == null || !player.getEntityWorld().isClient()) {
             return;
         }
 

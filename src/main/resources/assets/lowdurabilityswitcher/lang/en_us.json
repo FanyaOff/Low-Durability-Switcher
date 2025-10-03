@@ -7,7 +7,7 @@
   "config.lowdurabilityswitcher.armor_switcher_enabled": "Enable armor sound alert",
   "config.lowdurabilityswitcher.armor_durability_threshold": "Armor durability threshold",
   "config.lowdurabilityswitcher.category.general": "General settings",
-  "category.lowdurabilityswitcher": "Low Durability Switcher",
+  "key.category.lowdurabilityswitcher.main": "Low Durability Switcher",
   "key.lowdurabilityswitcher.toggle_armor": "Toggle Armor sound alert",
   "key.lowdurabilityswitcher.toggle_tool": "Toggle Tools",
   "message.lowdurabilityswitcher.toggle_armor": "Armor sound alert: %s",
