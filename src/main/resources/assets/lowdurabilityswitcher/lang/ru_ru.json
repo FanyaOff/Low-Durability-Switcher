@@ -7,7 +7,7 @@
   "config.lowdurabilityswitcher.armor_switcher_enabled": "Включить автопереключение брони",
   "config.lowdurabilityswitcher.armor_durability_threshold": "Порог прочности для переключения брони",
   "config.lowdurabilityswitcher.category.general": "Общие параметры",
-  "category.lowdurabilityswitcher": "Переключатель низкой прочности",
+  "key.category.lowdurabilityswitcher.main": "Low Durability Switcher",
   "key.lowdurabilityswitcher.toggle_armor": "Переключение брони",
   "key.lowdurabilityswitcher.toggle_tool": "Переключение инструментов",
   "message.lowdurabilityswitcher.toggle_armor": "Звуковое уведмоление о низкой прочности: %s",
