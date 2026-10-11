@@ -9,8 +9,8 @@ import me.shedaniel.clothconfig2.gui.entries.BooleanListEntry;
 import net.fanya.lowdurabilityswitcher.LowDurabilitySwitcher;
 import net.fanya.lowdurabilityswitcher.config.ConfigHandler;
 import net.fanya.lowdurabilityswitcher.config.ModConfig;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public class ModMenuIntegration implements ModMenuApi {
 
@@ -23,22 +23,22 @@ public class ModMenuIntegration implements ModMenuApi {
     private Screen createConfigScreen(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
-                .setTitle(Text.translatable("config.lowdurabilityswitcher.title"));
+                .setTitle(Component.translatable("config.lowdurabilityswitcher.title"));
 
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
         ModConfig config = ConfigHandler.getConfig();
 
         // Категория для инструментов
-        ConfigCategory toolCategory = builder.getOrCreateCategory(Text.translatable("config.lowdurabilityswitcher.tools"));
+        ConfigCategory toolCategory = builder.getOrCreateCategory(Component.translatable("config.lowdurabilityswitcher.tools"));
         toolCategory.addEntry(entryBuilder.startBooleanToggle(
-                        Text.translatable("config.lowdurabilityswitcher.tool_switcher_enabled"),
+                        Component.translatable("config.lowdurabilityswitcher.tool_switcher_enabled"),
                         config.toolSwitcherEnabled)
                 .setDefaultValue(false)
                 .setSaveConsumer(newValue -> config.toolSwitcherEnabled = newValue)
                 .build());
 
         toolCategory.addEntry(entryBuilder.startIntField(
-                        Text.translatable("config.lowdurabilityswitcher.tool_durability_threshold"),
+                        Component.translatable("config.lowdurabilityswitcher.tool_durability_threshold"),
                         config.toolDurabilityThreshold)
                 .setDefaultValue(10)
                 .setMin(1)
@@ -46,16 +46,16 @@ public class ModMenuIntegration implements ModMenuApi {
                 .build());
 
         // Категория для брони
-        ConfigCategory armorCategory = builder.getOrCreateCategory(Text.translatable("config.lowdurabilityswitcher.armor"));
+        ConfigCategory armorCategory = builder.getOrCreateCategory(Component.translatable("config.lowdurabilityswitcher.armor"));
         armorCategory.addEntry(entryBuilder.startBooleanToggle(
-                        Text.translatable("config.lowdurabilityswitcher.armor_switcher_enabled"),
+                        Component.translatable("config.lowdurabilityswitcher.armor_switcher_enabled"),
                         config.armorSwitcherEnabled)
                 .setDefaultValue(false)
                 .setSaveConsumer(newValue -> config.armorSwitcherEnabled = newValue)
                 .build());
 
         armorCategory.addEntry(entryBuilder.startIntField(
-                        Text.translatable("config.lowdurabilityswitcher.armor_durability_threshold"),
+                        Component.translatable("config.lowdurabilityswitcher.armor_durability_threshold"),
                         config.armorDurabilityThreshold)
                 .setDefaultValue(10)
                 .setMin(1)

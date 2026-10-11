@@ -2,15 +2,28 @@
 
 # Low Durability Switcher
 
-Mod, that saves you from unfortunate tool breakage by switching the slot to another
+Client-side Fabric mod that switches to another usable hotbar tool before the selected tool breaks.
 
-**For quilt use [quilted fabric api](https://modrinth.com/mod/qsl)**
+Requires Fabric API and Cloth Config. Mod Menu adds a settings screen when installed.
+Tool switching starts disabled in a new config; enable it with the R key or in Mod Menu.
+
+## Supported Minecraft versions
+
+The source uses official Mojang mappings throughout. Stonecutter builds separate jars for
+1.21.8, 1.21.9, 1.21.10, 1.21.11, 26.1, 26.2 and 26.3. The 26.1 jar declares
+compatibility with the 26.1 patch series, including 26.1.1 and 26.1.2.
+
+Use JDK 25 for Gradle. The build uses Java 21 bytecode for 1.21.x and Java 25
+bytecode for 26.x. Run `./gradlew.bat :26.3:build` for one version, or
+`./gradlew.bat :1.21.8:build :1.21.9:build :1.21.10:build :1.21.11:build :26.1:build :26.2:build :26.3:build`
+for all versions. Versioned jars are in each `versions/<version>/build/libs` directory.
 
 # Features
 
-- No settings, which makes it easier to use the mod
+- Tool and armor thresholds can be changed in Mod Menu
 - Bind that allows you to turn the mod on and off _(Switching status in Options -> Controls)_
-- The slot is changed if less than 10 durability remains on the tool
+- The slot changes when the selected tool reaches the configured durability threshold. It prefers a healthy tool, then an empty slot, then a non-damageable item.
+- Armor alerts sound at the configured threshold and every five durability points below it (for example, 60, 55, 50).
 - Memorizing the status of the switcher after exiting the game. You will not need to turn on the switcher every time you re-enter the game
 
 ## Since 1.2 update:

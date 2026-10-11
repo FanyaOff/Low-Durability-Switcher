@@ -1,84 +1,99 @@
 package net.fanya.lowdurabilityswitcher.logic;
 
 import net.fanya.lowdurabilityswitcher.config.ConfigHandler;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-
-import javax.tools.Tool;
+import net.fanya.lowdurabilityswitcher.LowDurabilitySwitcher;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.player.Inventory;
 
 public class ToolSwitcher {
-    private static boolean isEnabled = ConfigHandler.getConfig().toolSwitcherEnabled;
+    private static int lastFailedSlot = -1;
+    private static int lastFailedDamage = -1;
 
     public static boolean isEnabled() {
-        return isEnabled;
+        return ConfigHandler.getConfig().toolSwitcherEnabled;
     }
 
-    public static void toggleSwitcher(MinecraftClient client) {
-        isEnabled = !isEnabled;
+    public static void toggleSwitcher(Minecraft client) {
+        if (client.player == null) return;
+        boolean isEnabled = !isEnabled();
         ConfigHandler.getConfig().toolSwitcherEnabled = isEnabled;
         ConfigHandler.saveConfig();
 
         String statusKey = isEnabled
                 ? "message.lowdurabilityswitcher.yes"
                 : "message.lowdurabilityswitcher.no";
-        String localizedStatus = I18n.translate(statusKey);
+        String localizedStatus = I18n.get(statusKey);
 
-        client.player.sendMessage(
-                Text.translatable("message.lowdurabilityswitcher.toggle_tool", localizedStatus)
-                        .formatted(isEnabled ? Formatting.GREEN : Formatting.RED),
-                true
+        //? if >=26.1 {
+        client.player.sendOverlayMessage(
+        //?} else {
+        /*client.player.displayClientMessage(*/
+        //?}
+                Component.translatable("message.lowdurabilityswitcher.toggle_tool", localizedStatus)
+                        .withStyle(isEnabled ? ChatFormatting.GREEN : ChatFormatting.RED)
+                //? if <26.1 {
+                /*, true*/
+                //?}
         );
     }
-    public static void checkAndSwapTool(PlayerEntity player) {
-        if (player != null) {
-            int threshold = ConfigHandler.getConfig().toolDurabilityThreshold;
-
-            ItemStack item = player.getInventory().getSelectedStack();
-            int itemDurability = item.getMaxDamage() - item.getDamage();
-
-            if (!player.isSpectator()) {
-                if (ToolSwitcher.isEnabled() && itemDurability < threshold && itemDurability != 0) {
-
-                    int currentSlot = player.getInventory().getSelectedSlot();
-                    int newSlot = -1;
-
-                    for (int i = 0; i < 9; i++) {
-                        int slotToCheck = (currentSlot + i + 1) % 9;
-                        ItemStack stackInSlot = player.getInventory().getStack(slotToCheck);
-
-                        if (!isBuildingBlock(stackInSlot)) {
-                            newSlot = slotToCheck;
-                            break;
-                        }
-                    }
-
-                    if (newSlot != -1) {
-                        player.getInventory().setSelectedSlot(newSlot);
-                        player.sendMessage(Text.translatable("message.lowdurabilityswitcher.tool_removed").formatted(Formatting.RED), true);
-                        player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), 10F, 0F);
-                    }
-                }
-            }
+    public static void checkAndSwapTool(Player player) {
+        if (player == null || !player.level().isClientSide() || player.isSpectator() || !isEnabled()) {
+            return;
         }
+
+        int threshold = ConfigHandler.getConfig().toolDurabilityThreshold;
+        Inventory inventory = player.getInventory();
+        ItemStack selected = inventory.getSelectedItem();
+        if (!selected.isDamageableItem() || selected.getMaxDamage() - selected.getDamageValue() > threshold) {
+            lastFailedSlot = -1;
+            return;
+        }
+
+        int currentSlot = inventory.getSelectedSlot();
+        int newSlot = findSafeSlot(inventory, currentSlot, threshold);
+        if (newSlot < 0) {
+            if (lastFailedSlot != currentSlot || lastFailedDamage != selected.getDamageValue()) {
+                LowDurabilitySwitcher.LOGGER.warn(
+                        "Cannot protect selected tool in hotbar slot {}: no safe replacement slot ({} durability left)",
+                        currentSlot + 1, selected.getMaxDamage() - selected.getDamageValue());
+                lastFailedSlot = currentSlot;
+                lastFailedDamage = selected.getDamageValue();
+            }
+            return;
+        }
+
+        inventory.setSelectedSlot(newSlot);
+        lastFailedSlot = -1;
+        LowDurabilitySwitcher.LOGGER.info("Switched low durability tool from hotbar slot {} to {}",
+                currentSlot + 1, newSlot + 1);
+        //? if >=26.1 {
+        player.sendOverlayMessage(Component.translatable("message.lowdurabilityswitcher.tool_removed").withStyle(ChatFormatting.RED));
+        //?} else {
+        /*player.displayClientMessage(Component.translatable("message.lowdurabilityswitcher.tool_removed").withStyle(ChatFormatting.RED), true);*/
+        //?}
+        player.playSound(SoundEvents.NOTE_BLOCK_BELL.value(), 1F, 1F);
     }
 
-
-    private static boolean isBuildingBlock(ItemStack stack) {
-        if (stack == null || stack.isEmpty()) return false;
-
-        if (stack.getItem() instanceof BlockItem blockItem) {
-            Block block = blockItem.getBlock();
-            return block.getDefaultState().isSolid();
+    private static int findSafeSlot(Inventory inventory, int currentSlot, int threshold) {
+        int emptySlot = -1;
+        int nonDamageableSlot = -1;
+        for (int offset = 1; offset < 9; offset++) {
+            int slot = (currentSlot + offset) % 9;
+            ItemStack candidate = inventory.getItem(slot);
+            if (candidate.isEmpty()) {
+                if (emptySlot < 0) emptySlot = slot;
+            } else if (candidate.isDamageableItem()) {
+                if (candidate.getMaxDamage() - candidate.getDamageValue() > threshold) return slot;
+            } else if (nonDamageableSlot < 0) {
+                nonDamageableSlot = slot;
+            }
         }
-
-        return false;
+        return emptySlot >= 0 ? emptySlot : nonDamageableSlot;
     }
 }

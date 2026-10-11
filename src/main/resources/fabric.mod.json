@@ -16,7 +16,7 @@
   "license": "CC0-1.0",
   "icon": "assets/lowdurabilityswitcher/icon.png",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "client": [
       "net.fanya.lowdurabilityswitcher.LowDurabilitySwitcher"
@@ -26,12 +26,13 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.15.11",
+    "fabricloader": ">=${loader}",
     "fabric-api": "*",
-    "minecraft": "~1.21",
-    "java": ">=21"
+    "cloth-config": "*",
+    "minecraft": "${minecraft}",
+    "java": ">=${java}"
   },
   "suggests": {
-    "another-mod": "*"
+    "modmenu": "*"
   }
 }

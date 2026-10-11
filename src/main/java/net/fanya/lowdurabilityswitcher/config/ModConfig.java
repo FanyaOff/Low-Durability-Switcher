@@ -21,8 +21,13 @@ public class ModConfig {
     public static ModConfig load() {
         if (CONFIG_FILE.exists()) {
             try (FileReader reader = new FileReader(CONFIG_FILE)) {
-                return GSON.fromJson(reader, ModConfig.class);
-            } catch (IOException e) {
+                ModConfig loaded = GSON.fromJson(reader, ModConfig.class);
+                if (loaded != null) {
+                    loaded.toolDurabilityThreshold = Math.max(1, loaded.toolDurabilityThreshold);
+                    loaded.armorDurabilityThreshold = Math.max(1, loaded.armorDurabilityThreshold);
+                    return loaded;
+                }
+            } catch (IOException | com.google.gson.JsonParseException e) {
                 e.printStackTrace();
             }
         }
